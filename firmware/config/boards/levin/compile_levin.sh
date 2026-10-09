@@ -12,7 +12,6 @@ source config/boards/common_script_read_meta_env.inc "$meta"
 # Compiler flags are not dependencies in this release. Clean both images when switching.
 if [ "$(cat .levin-transport 2>/dev/null || true)" != "$mode" ]; then
  make -j12 clean
- make -C bootloader -j12 clean
 fi
 make -j12 config
 make -j12 "$@" all deliver/rusefi.bin
