@@ -269,3 +269,17 @@ Gotchas:
 - TunerStudio General Notes: `.junie/ts-readme.md`
 
 See also .junie/guidelines.md file
+
+### Local Levin release build notes
+
+For the Levin release_20260812 checkout, build-levin.ps1 reuses the sibling
+rusefi Pixi toolchain unless explicit tool paths are supplied. An MSYS PATH entry
+must use the shell-resolved tool directory, not a raw Windows drive-letter path
+whose colon becomes a PATH separator. PowerShell native stderr can contain
+successful Java/compiler diagnostics; determine success from the process exit code.
+
+A local clone of a linked shallow/partial worktree can omit the common shallow
+boundary metadata. Before publishing such a clone, check release ancestry and
+run git fsck --connectivity-only --no-reflogs --no-dangling. If metadata is missing,
+recover the known original repository's shallow boundaries; do not fabricate
+parents or rebase the firmware onto a newer release to hide the missing history.

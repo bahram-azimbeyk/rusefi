@@ -444,3 +444,16 @@ Open follow-ups:
 - Corrected MT_CUSTOM barometer initialization to use barometer endpoints instead of manifold MAP calibration. Bosch SMD284 calibration verified against supplied datasheet.
 - Validation: ARM firmware and bootloader compile; native host assertions of real board hooks and MAP/barometer conversion with HAL stubs; generated INI pin/enum/menu checks; independent binary CRC/vectors/HEX/SREC/signature checks. Full upstream test suite and physical ECU checks not run.
 - Follow-up: bench CH340/BT, SD/CAN, stepper, output polarity, ADC scaling, settings persistence and pin ownership. Current Lite SD wiring differs; this build is for Pro layout. OpenBLT remains native USB.
+
+## 2026-10-09 - Standalone Levin source and two transport builds
+
+- Created D:/project/codes/rusefi-levin as an independent checkout, on feature/levin-release-20260812. Retained the old hidden worktree as a backup. Base stays official release_20260812, a6d6d77b8876b5941c2ec12da8b28a00b9d7b538.
+- Backported GM LT1 Optispark low-resolution 8-slot decoding and nine regression tests. No engine tune or measured TDC offset is assumed.
+- Added native and uart profiles plus build-levin.ps1. Native selects USB tuning only; uart adds USART1 PA9/PA10 at 115200 for CH340/Bluetooth while retaining USB. OpenBLT updating uses native USB in both profiles.
+- Added Windows packaging helpers for FAT/embedded INI generation and reproducible package validation. Transport changes clean shared objects; retries in the same mode can resume.
+- Repaired missing shallow-boundary metadata after cloning the old linked worktree. Independent object storage, release ancestry and git fsck connectivity checks pass.
+- Validation: both exact PowerShell build commands completed. Native application/full image: 727912/760680 bytes; UART: 731772/764540 bytes. Both manifests identify source commit a9397dadb4bad96aa16ba17551c2dfd08afed194 with source_dirty=false.
+- Both packages pass application CRC, full-image/HEX/SREC comparison, vector/address, matching INI signature, transport presence/absence, LT1 inclusion and release-ancestry checks. Board checks pass for 26 outputs, 9 digital inputs and 8 analog inputs.
+- All nine Optispark tests and the complete 1168-test native suite (231 suites) pass. Real board-hook and independent barometer conversion checks also pass with host hardware stubs.
+- Generated files and binaries remain local and uncommitted. Source is prepared for the user's existing GitHub fork; no upstream PR or release is created.
+- No ECU was flashed or physically tested. Remaining bench checks: USB and CH340/BT communication, SD/CAN, stepper/output polarity, ADC scaling, settings persistence and actual LT1 timing calibration. Current Lite SD wiring is not supported by the Pro wiring profile.
