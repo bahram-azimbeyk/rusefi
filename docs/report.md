@@ -435,3 +435,12 @@ Open follow-ups:
   applying/resetting learned trims, or introduce an explicit tuning session).
 - Decide how a future bank-2-aware VE Analyze correction should select/combine
   STFT banks; this change preserves the existing bank-1 behavior.
+
+## 2026-10-09 - Levin release-based board build
+
+- Added isolated levin target on release_20260812 (a6d6d77), Pro 2.3 wiring and Pro 2.4 connector names. Original rusEFI worktree remains untouched.
+- Enabled fixed USART1 PA9/PA10 at 115200 for CH340/BT; native USB retained. SD SPI3 PC10/11/12 + PD2, CAN PD0/1 and DRV8825 PB10/11/PA15 are fixed. No external flash.
+- Restricted generic/output/event/switch/ADC dropdowns to exposed connectors with simple names. External assignments survive imports; CLT/IAT defaults 2490 ohm remain adjustable. Golf used only as hardware reference.
+- Corrected MT_CUSTOM barometer initialization to use barometer endpoints instead of manifold MAP calibration. Bosch SMD284 calibration verified against supplied datasheet.
+- Validation: ARM firmware and bootloader compile; native host assertions of real board hooks and MAP/barometer conversion with HAL stubs; generated INI pin/enum/menu checks; independent binary CRC/vectors/HEX/SREC/signature checks. Full upstream test suite and physical ECU checks not run.
+- Follow-up: bench CH340/BT, SD/CAN, stepper, output polarity, ADC scaling, settings persistence and pin ownership. Current Lite SD wiring differs; this build is for Pro layout. OpenBLT remains native USB.
