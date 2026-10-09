@@ -44,6 +44,7 @@ print('Signature:', signature)
 print('Application bytes:', len(app), 'full image bytes:',len(full))
 
 assert 'GM LT1 Optispark (8-slot only)' in text
+assert b'USB Console' in app, 'Native USB tuning channel missing'
 subprocess.run([sys.executable,str(fw/'config/boards/levin/tests/check_ini.py'),str(ini)],check=True,cwd=root)
 base='a6d6d77b8876b5941c2ec12da8b28a00b9d7b538'
 subprocess.run(['git','merge-base','--is-ancestor',base,'HEAD'],check=True,cwd=root)

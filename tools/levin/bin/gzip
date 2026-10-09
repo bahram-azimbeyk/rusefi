@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec "$LEVIN_BUILD_PYTHON" -m gzip "$@"
