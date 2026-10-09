@@ -30,7 +30,8 @@ foreach ($tool in @($PixiExecutable,$PixiManifest,$PythonExecutable,$Hex2DfuExec
 }
 $deps = Join-Path $repoRoot '.build/pydeps'
 $env:PYTHONPATH = $deps
-& $PythonExecutable -c 'import importlib.util,sys; sys.exit(0 if importlib.util.find_spec("pyfatfs") else 1)'
+$ErrorActionPreference = 'Continue' # Native tools may emit successful diagnostics on stderr.
+& $PythonExecutable -c "import importlib.util,sys; sys.exit(0 if importlib.util.find_spec('pyfatfs') else 1)"
 if ($LASTEXITCODE -ne 0) {
     & $PythonExecutable -m pip install --target $deps -r (Join-Path $repoRoot 'tools/levin/requirements.txt')
     if ($LASTEXITCODE -ne 0) { throw 'Could not install local FAT image dependencies.' }
