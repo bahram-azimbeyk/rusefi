@@ -134,7 +134,15 @@ void initMap() {
 
 	auto baroChannel = engineConfiguration->baroSensor.hwChannel;
 	if (isAdcChannelValid(baroChannel)) {
-		configureMapFunction(baroConverter, engineConfiguration->baroSensor.type);
+		if (engineConfiguration->baroSensor.type == MT_CUSTOM) {
+			// Barometer calibration is independent of the manifold MAP sensor.
+			baroConverter.configure(0, engineConfiguration->baroSensor.lowValue,
+				5, engineConfiguration->baroSensor.highValue,
+				engineConfiguration->mapErrorDetectionTooLow,
+				engineConfiguration->mapErrorDetectionTooHigh);
+		} else {
+			configureMapFunction(baroConverter, engineConfiguration->baroSensor.type);
+		}
 
 		baroSensor.setFunction(baroConverter);
 		baroSensor.Register();
