@@ -35,3 +35,6 @@ gradlew text eol=lf
 *.png binary
 *.jpg binary
 
+
+# Executable shell wrappers must work after a Windows checkout.
+tools/levin/bin/* text eol=lf

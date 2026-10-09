@@ -6,7 +6,8 @@ STM32F407VGT6, 8 MHz HSE. Based on official `release_20260812`, commit
 
 ## Connections
 
-TunerStudio communicates through CH340 or Bluetooth on USART1 (PA9 TX / PA10 RX),
+Two transport builds are available. `native` uses native USB only for tuning;
+`uart` additionally enables CH340 or Bluetooth on USART1 (PA9 TX / PA10 RX),
 115200 baud. The two bridges share the same UART: use one host connection at a time.
 Native USB remains available. The bundled OpenBLT updater uses native USB, not CH340;
 CH340 support here is for runtime tuning, not a new UART bootloader.
@@ -48,7 +49,8 @@ The target name is intentionally `levin` for a future Lite revision with matchin
 - This release's custom-barometer converter incorrectly used manifold MAP calibration.
   The included small sensor fix separates barometer endpoints from MAP endpoints.
 
-No Golf fuel, ignition, injector, trigger or engine calibration is included. The default
+No Golf fuel, ignition, injector, trigger or engine calibration is included. The LT1 8-slot trigger backport is included in both builds; selecting it and calibrating
+the trigger offset is still required (see docs/triggers/gm-lt1-optispark-8.md). The default
 engine type is rusEFI's generic MINIMAL_PINS, with suggested board assignments. Flashing
 firmware does not automatically replace compatible settings already stored in the ECU:
 review existing settings or start with clean configuration before importing an engine tune.
@@ -56,7 +58,30 @@ Fixed internal pins and serial baud are enforced; external assignments survive t
 
 ## Build
 
-Initialize the release's submodules and rusEFI build dependencies, then from repository root:
+On this Windows workstation, run from repository root:
+
+```powershell
+.\build-levin.ps1 -Mode native
+.\build-levin.ps1 -Mode uart
+```
+
+The Windows helper uses Pixi, Python and native hex2dfu. Tool paths can be passed as
+parameters. It reuses a sibling `rusefi` toolchain when present, without depending on
+that repository's source files or Git objects. Local Python FAT dependencies are
+installed under `.build/pydeps`. Packages go to `artifacts/levin-<mode>-lt1-20260812.zip`.
+
+On Linux with standard rusEFI dependencies and initialized submodules:
+
+```sh
+bash firmware/config/boards/levin/compile_levin.sh native
+bash firmware/config/boards/levin/compile_levin.sh uart
+```
+
+The entry point cleans application and bootloader objects when switching transport.
+Do not run two builds in this checkout concurrently. Native and UART have distinct INI
+signatures; use `rusefi_levin_native.ini` and `rusefi_levin.ini`, respectively.
+
+Equivalent low-level commands for the UART build:
 
 ```sh
 cd firmware

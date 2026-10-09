@@ -3,8 +3,11 @@ BOARDCPPSRC = $(BOARD_DIR)/board_configuration.cpp
 DDEFS += -DSTM32F407xx -DFIRMWARE_ID=\"levin\"
 DDEFS += -DDEFAULT_ENGINE_TYPE=engine_type_e::MINIMAL_PINS
 DDEFS += -DLED_CRITICAL_ERROR_BRAIN_PIN=Gpio::Unassigned
-# CH340 and Bluetooth share USART1. Native USB remains available independently.
+# Native USB is always available. UART/CH340/BT is selectable at build time.
+LEVIN_TUNING_UART ?= 1
+ifeq ($(LEVIN_TUNING_UART),1)
 DDEFS += -DSTM32_SERIAL_USE_USART1=TRUE
 DDEFS += -DTS_PRIMARY_UxART_PORT=SD1 -DEFI_TS_PRIMARY_IS_SERIAL=TRUE
 DDEFS += -DEFI_CONSOLE_TX_BRAIN_PIN=Gpio::A9 -DEFI_CONSOLE_RX_BRAIN_PIN=Gpio::A10
+endif
 BUNDLE_OPENOCD = yes
