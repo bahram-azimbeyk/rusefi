@@ -457,3 +457,27 @@ Open follow-ups:
 - All nine Optispark tests and the complete 1168-test native suite (231 suites) pass. Real board-hook and independent barometer conversion checks also pass with host hardware stubs.
 - Generated files and binaries remain local and uncommitted. Source is prepared for the user's existing GitHub fork; no upstream PR or release is created.
 - No ECU was flashed or physically tested. Remaining bench checks: USB and CH340/BT communication, SD/CAN, stepper/output polarity, ADC scaling, settings persistence and actual LT1 timing calibration. Current Lite SD wiring is not supported by the Pro wiring profile.
+
+## 2026-11-09 - Levin: LT1 removal, input renames, tach mode, guarded base-tune reset
+
+- Removed the GM LT1 Optispark 8-slot backport (reverse of d3cda6e3, left uncommitted): TT_GM_LT1_OPTISPARK_8 dropped, TT_UNUSED back to 99, decoder/test/doc deleted, LT1 references removed from LEVIN.md, board README and tools/levin/package.py (package names now levin-<mode>-20260812, no lt1_decoder manifest key).
+- Inputs renamed: AUX PULSE n -> PULSE IN n, GAUX n -> GROUND SWITCH n (inputs.yaml, prepend Gpio_enum, check_ini.py).
+- Tach output (PE8) defaults to OM_INVERTED in levinDefaultConfiguration.
+- Controller -> Base Tunes now holds a red warning, a PC-only "I understand" variable (levinResetConfirm, board_pc_variables.ini) and a "Reset ECU to Levin default base tune" button (cmd_set_engine_type_default -> applyPreset(DEFAULT_ENGINE_TYPE)) enabled only when confirmed. TunerStudio commandButton has no confirmation popup, hence the gate. The unguarded bench-test "Reset firmware settings" button is hidden (ts_show_reset_calibrations false).
+- Knock on PA6/PA7 rejected: on F4, ADC1 = slow ADC, ADC2 = fast MAP ADC (only source of MAP averaging samples), and software knock needs its own ADC; PA6/PA7 exist only on ADC1/2. All F4 boards put knock on ADC3 (PA0-3, PC0-3). Agreed hardware direction: KNOCK1 = PC3, KNOCK2 = PC0, ANALOG IN 2 moves PC0 -> PC4, ANALOG IN 4 = PC5 at CN11_7. Pending: per-hardware-revision build split so older boards keep ANALOG IN 2 on PC0.
+- Validation: full native unit-test suite 1158/1158 (230 suites) after LT1 removal; Levin board host test passes (incl. tach mode). Firmware not built, per request; check_ini.py additions (names, guarded reset) run only after the next build regenerates the INI.
+- USB drive: content comes from hw_layer/mass_storage/filesystem_contents + MAIN_HELP_URL, assembled at build time (EXTRA_FILES_TO_COPY_ON_IMAGE_FOLDER overrides the extra files). No runtime toggle exists; EFI_EMBED_INI_MSD=FALSE removes the INI drive (and its ~34 KB RAM CompressedBlockDevice), HAL_USE_USB_MSD=FALSE removes MSD entirely (including SD-over-USB).
+
+## 2026-11-09 - Levin: new connector layout, ANALOG IN 4 and two software knock channels
+
+- Hardware-revision split dropped at the user's request; changes apply directly to the levin target.
+- Connector update: ANALOG IN 4 = PC5 (EFI_ADC_15) at CN11_7 (former CAM HALL position); ANALOG IN 2 moved PC0 -> PC4 (EFI_ADC_14), still CN11_9; KNOCK1 = PC3 at CN11_11 and KNOCK2 = PC0 at CN11_10 (former CAN H/L positions), documented in inputs.yaml as function-only entries.
+- Software knock enabled at compile time: EFI_SOFTWARE_KNOCK + STM32_ADC_USE_ADC3 in board.mk, board knock_config.h (ADC3 IN13/IN10, two channels), Knock Control menu shown (ts_show_software_knock true). enableSoftwareKnock stays at its default (off); per-engine bank assignment, frequency and thresholds are left to the tune.
+- check_ini.py now asserts the new analog layout, that PC0/PC3 are not offered as analog inputs, and that the Knock Control menu is present.
+- Not built (per request). Open: confirm RAM fit of the knock sample buffer (1800 samples) and ADC3 DMA (DMA2 stream 1) on the next build; CAN is no longer on CN11, but the internal CAN pins (PD0/PD1) are still forced in levinConfigOverrides pending a decision. Tunes from older boards that used ANALOG IN 2 on PC0 (EFI_ADC_10) would now read the knock input.
+
+## 2026-11-10 - Levin: barometer input user assignable (INTERNAL BARO)
+
+- baroSensor.hwChannel = EFI_ADC_5 moved from levinConfigOverrides (forced on every load) to levinDefaultConfiguration (default only). PA5 is listed in inputs.yaml as int_baro / "INTERNAL BARO" so it is selectable in every analog dropdown; ts_show_baro_pin override removed from prepend.txt, so Baro input (and the LPS2x digital baro pins, active only when no analog baro is set) are visible again.
+- CAN left untouched: it is on separate connector CN13 (ATX 4P: 1 CANH, 2 CANL, 3 +12V via 0.5 A fuse, 4 GND); documented in the board README. Older Levin hardware will not be produced, so no compatibility handling for the former PC0 ANALOG IN 2.
+- Tests: board host test updated (default PA5, foreign reassignment kept) and passes; check_ini.py now expects INTERNAL BARO at ADC5, 10 analog entries and a visible baroSensor_hwChannel field. Firmware not built.

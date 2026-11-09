@@ -13,6 +13,8 @@ int main(){
  for(int i=0;i<8;i++){assert(config.injectionPins[i]==inj[i]);assert(config.ignitionPins[i]==ign[i]);}
  for(int i=8;i<12;i++){assert(config.injectionPins[i]==Gpio::Unassigned);assert(config.ignitionPins[i]==Gpio::Unassigned);}
  assert(config.clt.adcChannel==1 && config.iat.adcChannel==0 && config.map.sensor.hwChannel==3 && config.afr.hwChannel==8);
+ assert(config.tachOutputPin==Gpio::E8 && config.tachOutputPinMode==OM_INVERTED);
+ assert(config.baroSensor.hwChannel==5 && config.baroSensor.type==MT_CUSTOM);
  // Simulate a foreign tune trying to change the PCB-only wiring.
  config.idle.stepperDirectionPin=Gpio::E0;config.idle.stepperStepPin=Gpio::E1;config.stepperEnablePin=Gpio::E2;
  config.canRxPin=Gpio::B8;config.canTxPin=Gpio::B9;config.can2RxPin=Gpio::B12;config.can2TxPin=Gpio::B13;
@@ -26,11 +28,12 @@ int main(){
  assert(config.idle.stepperDirectionPin==Gpio::B10 && config.idle.stepperStepPin==Gpio::B11 && config.stepperEnablePin==Gpio::A15);
  assert(config.canRxPin==Gpio::D0 && config.canTxPin==Gpio::D1 && config.can2RxPin==Gpio::Unassigned && config.can2TxPin==Gpio::Unassigned);
  assert(config.spi3sckPin==Gpio::C10 && config.spi3misoPin==Gpio::C11 && config.spi3mosiPin==Gpio::C12 && config.sdCardCsPin==Gpio::D2 && config.sdCardSpiDevice==3);
- assert(config.uartConsoleSerialSpeed==115200 && config.baroSensor.hwChannel==5 && config.vbattAdcChannel==4);
+ assert(config.uartConsoleSerialSpeed==115200 && config.vbattAdcChannel==4);
  assert(config.clt.config.bias_resistor==2700 && config.iat.config.bias_resistor==2490);
  assert(!config.useHbridgesToDriveIdleStepper && !config.useRawOutputToDriveIdleStepper);
  assert(config.fanPin==Gpio::E10 && config.injectionPins[7]==Gpio::Unassigned && config.ignitionPins[7]==Gpio::Unassigned);
  assert(config.triggerInputPins[0]==Gpio::B6 && config.camInputs[0]==Gpio::D13 && config.idle.solenoidPin==Gpio::D15);
+ assert(config.baroSensor.hwChannel==12); // baro input is user assignable, not forced
  // Execute the actual MAP/baro init and linear converter, with HAL/registration stubbed.
  config.map.sensor.type=MT_CUSTOM;config.map.sensor.lowValue=10;config.map.sensor.highValue=350;
  initMap();near(baroConverter.convert(3.9475f).Value,100);near(mapConverter.convert(5).Value,350);

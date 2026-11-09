@@ -20,14 +20,13 @@ Internal wiring is restored after loading a tune and is hidden from pin selector
 | CAN RX / TX | PD0 / PD1 |
 | SD SPI3 SCK / MISO / MOSI / CS | PC10 / PC11 / PC12 / PD2 |
 | Battery ADC | PA4 |
-| SMD284 barometer ADC | PA5 |
 
 Stepper direction defaults to inverted, following the working hardware-reference tune.
 Stepper enable is normal polarity. Mode, travel, direction and operating settings remain
 user adjustable. SD is present; external flash is not fitted. CAN protocol remains selectable.
 
 All exposed outputs and inputs remain assignable to other compatible functions. Names
-such as `PWM OUT 1`, `INJ 8`, and `AUX PULSE 1` refer to physical connector channels.
+such as `PWM OUT 1`, `INJ 8`, and `PULSE IN 1` refer to physical connector channels.
 Only exposed digital pins appear in generic digital selectors. Normal rusEFI pin ownership
 checks remain in force; an already claimed pin is not made shareable by this board definition.
 To reuse an injector or coil output, remove its old assignment if that channel is claimed.
@@ -38,22 +37,33 @@ The target name is intentionally `levin` for a future Lite revision with matchin
 
 ## Sensor defaults
 
+- Digital inputs are named `PULSE IN 1..4`, `GROUND SWITCH 1..2`, `CRANK`, `CAM`, `VSS`.
+  Analog inputs: `IAT`, `CLT`, `TPS`, `MAP`, `O2`, `ANALOG IN 1` (PC2), `ANALOG IN 2` (PC4),
+  `ANALOG IN 3` (PC1), `ANALOG IN 4` (PC5, CN11_7, former CAM HALL position).
+- Knock: KNOCK1 = PC3 (CN11_11), KNOCK2 = PC0 (CN11_10), former CAN H/L positions. Fixed at
+  compile time on ADC3 (`knock_config.h`); on F4 knock must use ADC3-capable pins (PA0-3/PC0-3).
+  Knock sensing ships disabled: enable and calibrate it under Knock Control for each engine.
+- Tachometer output (`TACHO`, PE8) defaults to inverted output mode.
 - CLT and IAT pull-ups: 2490 ohm. These are defaults, not forced values: recalibrate if a
   sensor is moved to an input with a different pull-up.
 - ADC reference: 3.3 V; external analog divider: 1.5151515; battery divider: 7.0.
   The divider values follow the working Golf hardware-reference tune and need voltage
   verification on the physical board. Battery scaling remains adjustable.
+- On-board SMD284 barometer on PA5 is the default baro input, shown as `INTERNAL BARO`;
+  it is user assignable (Baro sensor -> Baro input) like any other analog input.
+- CAN is on its own connector CN13 (ATX 4P): 1 CANH, 2 CANL, 3 +12V via 0.5 A fuse, 4 GND.
 - SMD284: `Vout / Vdd = 0.007895 * pressure_kPa`, using the SMD084/SMD284 column
   of the supplied Bosch datasheet. Custom calibration endpoints: 0 kPa at 0 V and
   approximately 126.662 kPa at 5 V. Check against local absolute ambient pressure.
 - This release's custom-barometer converter incorrectly used manifold MAP calibration.
   The included small sensor fix separates barometer endpoints from MAP endpoints.
 
-No Golf fuel, ignition, injector, trigger or engine calibration is included. The LT1 8-slot trigger backport is included in both builds; selecting it and calibrating
-the trigger offset is still required (see docs/triggers/gm-lt1-optispark-8.md). The default
+No Golf fuel, ignition, injector, trigger or engine calibration is included. The default
 engine type is rusEFI's generic MINIMAL_PINS, with suggested board assignments. Flashing
 firmware does not automatically replace compatible settings already stored in the ECU:
 review existing settings or start with clean configuration before importing an engine tune.
+TunerStudio `Controller -> Base Tunes` resets the whole ECU to this board default base tune;
+the button is enabled only after ticking the "I understand" confirmation (all settings are erased).
 Fixed internal pins and serial baud are enforced; external assignments survive tune import.
 
 ## Build
@@ -68,7 +78,7 @@ On this Windows workstation, run from repository root:
 The Windows helper uses Pixi, Python and native hex2dfu. Tool paths can be passed as
 parameters. It reuses a sibling `rusefi` toolchain when present, without depending on
 that repository's source files or Git objects. Local Python FAT dependencies are
-installed under `.build/pydeps`. Packages go to `artifacts/levin-<mode>-lt1-20260812.zip`.
+installed under `.build/pydeps`. Packages go to `artifacts/levin-<mode>-20260812.zip`.
 
 On Linux with standard rusEFI dependencies and initialized submodules:
 

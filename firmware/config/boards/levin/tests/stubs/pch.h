@@ -13,7 +13,7 @@ struct Config {
  Gpio stepperEnablePin{},canRxPin{},canTxPin{},can2RxPin{},can2TxPin{},spi3sckPin{},spi3misoPin{},spi3mosiPin{},sdCardCsPin{};
  Gpio injectionPins[12]{},ignitionPins[12]{},triggerInputPins[2]{},camInputs[4]{},triggerSimulatorPins[2]{};
  Gpio fuelPumpPin{},fanPin{},tachOutputPin{},secondSolenoidPin{};
- int stepperEnablePinMode=0,sdCardCsPinMode=0,sdCardSpiDevice=0,vbattAdcChannel=-1,tps1_1AdcChannel=-1,uartConsoleSerialSpeed=0,stepperDirectionPinMode=0;
+ int stepperEnablePinMode=0,sdCardCsPinMode=0,sdCardSpiDevice=0,vbattAdcChannel=-1,tps1_1AdcChannel=-1,uartConsoleSerialSpeed=0,stepperDirectionPinMode=0,tachOutputPinMode=0;
  bool useHbridgesToDriveIdleStepper=false,useRawOutputToDriveIdleStepper=false,is_enabled_spi_1=false,is_enabled_spi_2=false,is_enabled_spi_3=false,useStepperIdle=false;
  float adcVcc=0,analogInputDividerCoefficient=0,vbattDividerCoeff=0,mapLowValueVoltage=0,mapHighValueVoltage=5,mapErrorDetectionTooLow=-10,mapErrorDetectionTooHigh=500;
  Pressure baroSensor,afr; struct {Pressure sensor;} map; Therm clt,iat;
