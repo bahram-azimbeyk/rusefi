@@ -13,4 +13,3 @@ void configureGm60_2_2_2(TriggerWaveform *s);
 void configureGmTriggerWaveform(TriggerWaveform *s);
 void initGmLS24_5deg(TriggerWaveform *s);
 void initGmLS24_3deg(TriggerWaveform *s);
-void initializeGmLt1Optispark8(TriggerWaveform *s);

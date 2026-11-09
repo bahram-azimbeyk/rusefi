@@ -43,18 +43,17 @@ print('Verified application CRC, full/HEX/SREC consistency, flash vectors, and I
 print('Signature:', signature)
 print('Application bytes:', len(app), 'full image bytes:',len(full))
 
-assert 'GM LT1 Optispark (8-slot only)' in text
 assert b'USB Console' in app, 'Native USB tuning channel missing'
 subprocess.run([sys.executable,str(fw/'config/boards/levin/tests/check_ini.py'),str(ini)],check=True,cwd=root)
 base='a6d6d77b8876b5941c2ec12da8b28a00b9d7b538'
 subprocess.run(['git','merge-base','--is-ancestor',base,'HEAD'],check=True,cwd=root)
 # Independently verify that the requested runtime transport exists in the linked firmware.
 assert b'Primary TS Channel' in app if mode=='uart' else b'Primary TS Channel' not in app
-out=root/'artifacts'/('levin-'+mode+'-lt1-20260812');out.mkdir(parents=True,exist_ok=True)
-for src,dst in [(fw/'deliver/rusefi.bin','levin-full.bin'),(fw/'build/rusefi.srec','levin-update.srec'),(ini,ini.name),(fw/'config/boards/levin/README.md','README.md'),(root/'docs/triggers/gm-lt1-optispark-8.md','LT1.md')]:shutil.copy2(src,out/dst)
+out=root/'artifacts'/('levin-'+mode+'-20260812');out.mkdir(parents=True,exist_ok=True)
+for src,dst in [(fw/'deliver/rusefi.bin','levin-full.bin'),(fw/'build/rusefi.srec','levin-update.srec'),(ini,ini.name),(fw/'config/boards/levin/README.md','README.md')]:shutil.copy2(src,out/dst)
 mp=(fw/'build/rusefi.map').read_text(encoding='utf-8',errors='replace')
 def sym(n):return int(re.search(r'0x([0-9a-f]+)\s+'+n+r'\s*=',mp)[1],16)
-info={'base_tag':'release_20260812','base_commit':base,'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'source_dirty':bool(subprocess.check_output(['git','diff','HEAD','--','firmware/config/boards/levin','firmware/controllers/trigger/decoders','firmware/controllers/algo/engine_types.h','firmware/integration/rusefi_config.txt'],cwd=root)),'mode':mode,'lt1_decoder':True,'signature':signature,'application_bytes':len(app),'main_heap_before_runtime_bytes':sym('__heap_end__')-sym('__heap_base__'),'ccm_heap_before_runtime_bytes':sym('__heap_ccm_end__')-sym('__heap_ccm_base__'),'full_image_address':'0x08000000','hardware_tested':False,'validation':['Application CRC','Full image/HEX/SREC consistency','Vectors','Exact INI signature','Runtime UART presence/absence','INI pins and visibility','Release base ancestry']}
+info={'base_tag':'release_20260812','base_commit':base,'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'source_dirty':bool(subprocess.check_output(['git','diff','HEAD','--','firmware/config/boards/levin','firmware/controllers/trigger/decoders','firmware/controllers/algo/engine_types.h','firmware/integration/rusefi_config.txt'],cwd=root)),'mode':mode,'signature':signature,'application_bytes':len(app),'main_heap_before_runtime_bytes':sym('__heap_end__')-sym('__heap_base__'),'ccm_heap_before_runtime_bytes':sym('__heap_ccm_end__')-sym('__heap_ccm_base__'),'full_image_address':'0x08000000','hardware_tested':False,'validation':['Application CRC','Full image/HEX/SREC consistency','Vectors','Exact INI signature','Runtime UART presence/absence','INI pins and visibility','Release base ancestry']}
 (out/'manifest.json').write_text(json.dumps(info,indent=2)+'\n',encoding='utf-8')
 (out/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir()) if p.is_file() and p.name!='SHA256SUMS.txt'),encoding='ascii')
 archive=out.with_suffix('.zip')

@@ -17,14 +17,12 @@ Golf is a hardware reference only, not a bundled engine tune.
 
 `native`: native USB tuning, no primary UART tuning thread.
 `uart`: CH340/Bluetooth at 115200 baud, native USB also available.
-Both include GM LT1 Optispark (8-slot only), without choosing it automatically or
-assuming a measured cylinder-1 TDC offset. OpenBLT updating still uses native USB.
+OpenBLT updating still uses native USB in both.
 
-Outputs: `artifacts/levin-native-lt1-20260812.zip` and `artifacts/levin-uart-lt1-20260812.zip`.
+Outputs: `artifacts/levin-native-20260812.zip` and `artifacts/levin-uart-20260812.zip`.
 Use each package's matching INI. The full binary starts at 0x08000000.
 
 - [Board, wiring and bring-up details](firmware/config/boards/levin/README.md)
-- [LT1 configuration and unresolved engine timing calibration](docs/triggers/gm-lt1-optispark-8.md)
 - [Session work and validation report](docs/report.md)
 
 The checkout has its own `.git` directory; it is not a linked worktree. Build tools
