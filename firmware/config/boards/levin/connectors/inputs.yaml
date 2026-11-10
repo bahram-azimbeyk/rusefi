@@ -7,7 +7,7 @@ pins:
   - pin: CN11_2
     id: [D14, D14]
     class: [event_inputs, switch_inputs]
-    ts_name: GAUX 2
+    ts_name: GROUND SWITCH 2
 
   - pin: CN11_3
     id: [D3, D3]
@@ -22,27 +22,27 @@ pins:
   - pin: CN11_8
     id: [D13, D13]
     class: [event_inputs, switch_inputs]
-    ts_name: AUX PULSE 1
+    ts_name: PULSE IN 1
 
   - pin: CN11_12
     id: [E14, E14]
     class: [event_inputs, switch_inputs]
-    ts_name: GAUX 1
+    ts_name: GROUND SWITCH 1
 
   - pin: CN11_15
     id: [D7, D7]
     class: [event_inputs, switch_inputs]
-    ts_name: AUX PULSE 4
+    ts_name: PULSE IN 4
 
   - pin: CN11_16
     id: [C7, C7]
     class: [event_inputs, switch_inputs]
-    ts_name: AUX PULSE 3
+    ts_name: PULSE IN 3
 
   - pin: CN11_17
     id: [B8, B8]
     class: [event_inputs, switch_inputs]
-    ts_name: AUX PULSE 2
+    ts_name: PULSE IN 2
 
   - pin: CN11_23
     id: EFI_ADC_0
@@ -75,7 +75,7 @@ pins:
     ts_name: ANALOG IN 1
 
   - pin: CN11_9
-    id: EFI_ADC_10
+    id: EFI_ADC_14
     class: analog_inputs
     ts_name: ANALOG IN 2
 
@@ -83,3 +83,21 @@ pins:
     id: EFI_ADC_11
     class: analog_inputs
     ts_name: ANALOG IN 3
+
+  - pin: CN11_7
+    id: EFI_ADC_15
+    class: analog_inputs
+    ts_name: ANALOG IN 4
+
+  # On-board SMD284 barometer, no connector pin. Default baro input, user assignable.
+  - pin: int_baro
+    id: EFI_ADC_5
+    class: analog_inputs
+    ts_name: INTERNAL BARO
+
+  # Knock inputs are fixed at compile time (knock_config.h, ADC3) and not user assignable.
+  - pin: CN11_11
+    function: Knock input 1 (PC3)
+
+  - pin: CN11_10
+    function: Knock input 2 (PC0)

@@ -26,7 +26,6 @@ static void levinConfigOverrides() {
     engineConfiguration->sdCardCsPin = Gpio::D2;
     engineConfiguration->sdCardCsPinMode = OM_DEFAULT;
     engineConfiguration->vbattAdcChannel = EFI_ADC_4;
-    engineConfiguration->baroSensor.hwChannel = EFI_ADC_5;
 }
 
 static void levinDefaultConfiguration() {
@@ -54,6 +53,7 @@ static void levinDefaultConfiguration() {
     engineConfiguration->fuelPumpPin = Gpio::E11;
     engineConfiguration->fanPin = Gpio::E9;
     engineConfiguration->tachOutputPin = Gpio::E8;
+    engineConfiguration->tachOutputPinMode = OM_INVERTED;
     engineConfiguration->idle.solenoidPin = Gpio::D10;
     engineConfiguration->secondSolenoidPin = Gpio::D9;
     engineConfiguration->uartConsoleSerialSpeed = 115200;
@@ -62,6 +62,8 @@ static void levinDefaultConfiguration() {
     engineConfiguration->adcVcc = 3.3f;
     engineConfiguration->analogInputDividerCoefficient = 1.5151515f;
     engineConfiguration->vbattDividerCoeff = 7.0f;
+    // On-board SMD284 on PA5 ("INTERNAL BARO"): default only, user may reassign.
+    engineConfiguration->baroSensor.hwChannel = EFI_ADC_5;
     engineConfiguration->baroSensor.type = MT_CUSTOM;
     engineConfiguration->baroSensor.lowValue = 0;
     engineConfiguration->baroSensor.highValue = 1.0f / 0.007895f;

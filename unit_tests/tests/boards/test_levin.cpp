@@ -34,6 +34,9 @@ TEST(LevinBoard, Defaults) {
 	EXPECT_EQ(EFI_ADC_0, engineConfiguration->iat.adcChannel);
 	EXPECT_EQ(EFI_ADC_3, engineConfiguration->map.sensor.hwChannel);
 	EXPECT_EQ(EFI_ADC_8, engineConfiguration->afr.hwChannel);
+	EXPECT_EQ(Gpio::E8, engineConfiguration->tachOutputPin);
+	EXPECT_EQ(OM_INVERTED, engineConfiguration->tachOutputPinMode);
+	EXPECT_EQ(EFI_ADC_5, engineConfiguration->baroSensor.hwChannel);
 	EXPECT_EQ(MT_CUSTOM, engineConfiguration->baroSensor.type);
 	EXPECT_NEAR(126.6624f, engineConfiguration->baroSensor.highValue, 0.001f);
 }
@@ -83,7 +86,8 @@ TEST(LevinBoard, FixedWiringPreservesExternalReassignments) {
 	EXPECT_EQ(Gpio::C12, engineConfiguration->spi3mosiPin);
 	EXPECT_EQ(Gpio::D2, engineConfiguration->sdCardCsPin);
 	EXPECT_EQ(SPI_DEVICE_3, engineConfiguration->sdCardSpiDevice);
-	EXPECT_EQ(EFI_ADC_5, engineConfiguration->baroSensor.hwChannel);
+	// INTERNAL BARO (PA5) is a default only: a deliberate reassignment is kept.
+	EXPECT_EQ(EFI_ADC_12, engineConfiguration->baroSensor.hwChannel);
 	EXPECT_EQ(EFI_ADC_4, engineConfiguration->vbattAdcChannel);
 	EXPECT_EQ(115200, engineConfiguration->uartConsoleSerialSpeed);
 	EXPECT_EQ(Gpio::E10, engineConfiguration->fanPin);

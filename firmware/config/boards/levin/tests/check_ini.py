@@ -13,14 +13,16 @@ OUTPUTS = {
     'D11': 'PWM OUT 3', 'D8': 'PWM OUT 4',
 }
 INPUTS = {
-    'B6': 'VSS', 'D14': 'GAUX 2', 'D3': 'CRANK', 'D4': 'CAM',
-    'D13': 'AUX PULSE 1', 'E14': 'GAUX 1', 'D7': 'AUX PULSE 4',
-    'C7': 'AUX PULSE 3', 'B8': 'AUX PULSE 2',
+    'B6': 'VSS', 'D14': 'GROUND SWITCH 2', 'D3': 'CRANK', 'D4': 'CAM',
+    'D13': 'PULSE IN 1', 'E14': 'GROUND SWITCH 1', 'D7': 'PULSE IN 4',
+    'C7': 'PULSE IN 3', 'B8': 'PULSE IN 2',
 }
 ANALOG = {
-    1: 'IAT', 2: 'CLT', 3: 'TPS', 4: 'MAP', 9: 'O2',
-    11: 'ANALOG IN 2', 12: 'ANALOG IN 3', 13: 'ANALOG IN 1',
+    1: 'IAT', 2: 'CLT', 3: 'TPS', 4: 'MAP', 6: 'INTERNAL BARO', 9: 'O2',
+    12: 'ANALOG IN 3', 13: 'ANALOG IN 1', 15: 'ANALOG IN 2', 16: 'ANALOG IN 4',
 }
+# PC0 (EFI_ADC_10) and PC3 (EFI_ADC_13) are the ADC3 knock inputs.
+KNOCK_ADC_INDICES = (11, 14)
 
 
 def check(path):
@@ -53,19 +55,26 @@ def check(path):
     assert sum(value not in ('NONE', 'INVALID') for value in analog) == len(ANALOG)
     for channel, label in ANALOG.items():
         assert analog[channel] == label, (channel, label)
+    for channel in KNOCK_ADC_INDICES:
+        assert analog[channel] == 'INVALID', channel
+    assert re.search(r'subMenu = softwareKnock,\s+"Knock Control"', text)
+    assert re.search(r'commandButton = "Reset ECU to Levin default base tune", '
+                     r'cmd_set_engine_type_default, \{ levinResetConfirm == 1 \}', text)
+    assert 'levinResetConfirm = bits' in text
+    assert 'Reset firmware settings' not in text and 'Reset to factory tune' not in text
 
     fields = set(re.findall(r'^\s*field\s*=\s*"[^"]*",\s*(\w+)', text, re.MULTILINE))
     for field in (
-        'baroSensor_hwChannel', 'vbattAdcChannel', 'canRxPin', 'canTxPin',
+        'vbattAdcChannel', 'canRxPin', 'canTxPin',
         'sdCardCsPin', 'spi3sckPin', 'idle_stepperDirectionPin',
         'idle_stepperStepPin', 'stepperEnablePin',
     ):
         assert field not in fields, field
-    for field in ('clt_bias_resistor', 'iat_bias_resistor', 'vbattDividerCoeff'):
+    for field in ('baroSensor_hwChannel', 'clt_bias_resistor', 'iat_bias_resistor', 'vbattDividerCoeff'):
         assert field in fields, field
     active_lines = (line for line in text.splitlines() if not line.lstrip().startswith(';'))
     assert all('@@if_' not in line for line in active_lines)
-    print(f'PASS {path.name}: connector labels, enum IDs, internal pin visibility and calibration fields')
+    print(f'PASS {path.name}: connector labels, enum IDs, internal pin visibility, knock menu, guarded reset and calibration fields')
 
 
 if __name__ == '__main__':

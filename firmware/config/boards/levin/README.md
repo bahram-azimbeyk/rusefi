@@ -36,7 +36,6 @@ and hidden from TunerStudio pin selectors:
 | CAN RX / TX | PD0 / PD1 |
 | SD SPI3 clock / MISO / MOSI / CS | PC10 / PC11 / PC12 / PD2 |
 | Battery voltage | PA4 |
-| Bosch SMD284 barometer | PA5 |
 
 SD is fitted; there is no external flash. Stepper direction, travel, operating
 mode and CAN protocol remain configurable. Direction defaults to inverted,
@@ -52,7 +51,18 @@ before assigning it to another. Connector YAMLs list the MCU connections.
 - Eight injector and eight ignition assignments, with MINIMAL_PINS as the default
   engine type. This is a board definition, not a Golf or LT1 engine tune.
 - IAT PA0 and CLT PA1 use 2490 ohm bias resistors. Calibration remains editable.
-- TPS PA2, MAP PA3, wideband analog PB0; spare analog PC2, PC0, PC1.
+- TPS PA2, MAP PA3, wideband analog PB0; spare analog ANALOG IN 1 PC2, ANALOG IN 2 PC4,
+  ANALOG IN 3 PC1, ANALOG IN 4 PC5 (CN11_7).
+- Digital inputs: PULSE IN 1..4, GROUND SWITCH 1..2, CRANK, CAM, VSS.
+- On-board Bosch SMD284 barometer on PA5 is the default baro input, shown as
+  INTERNAL BARO; it is user assignable like any analog input.
+- Software knock on ADC3: KNOCK1 PC3 (CN11_11), KNOCK2 PC0 (CN11_10), fixed at compile
+  time in knock_config.h. On F4, ADC1/ADC2 are the slow and fast ADCs, so knock inputs
+  must be ADC3-capable (PA0-3/PC0-3). Knock sensing ships disabled; calibrate per engine.
+- Tachometer output (TACHO, PE8) defaults to inverted output mode.
+- CAN is on its own connector CN13 (ATX 4P): 1 CANH, 2 CANL, 3 +12V via 0.5 A fuse, 4 GND.
+- Controller -> Base Tunes resets the whole ECU to this board default base tune; the
+  button is enabled only after ticking the "I understand" confirmation.
 - ADC reference 3.3 V, analog divider 1.5151515, battery divider 7.0.
 - SMD284 transfer: Vout/Vdd = 0.007895 * pressure (kPa), represented by a custom
   0..126.662 kPa calibration at 0..5 V. Barometer calibration is independent of MAP.
