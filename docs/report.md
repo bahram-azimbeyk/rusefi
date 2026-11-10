@@ -780,3 +780,8 @@ Remaining:
 - Ported from feature/levin-release-20260812 (identical board sources before the change): inputs renamed (PULSE IN n, GROUND SWITCH n); ANALOG IN 2 PC0 -> PC4; ANALOG IN 4 PC5 (CN11_7); software knock on ADC3 with KNOCK1 PC3 (CN11_11) and KNOCK2 PC0 (CN11_10) via knock_config.h; tach output default inverted; guarded "Reset ECU to Levin default base tune" in Controller -> Base Tunes (PC variable gate, bench-test reset hidden); on-board PA5 barometer is a default, user-assignable INTERNAL BARO input instead of a forced pin.
 - Updated LevinBoard host tests (tach mode, baro default and kept reassignment) and check_ini.py (new labels, knock pins absent from analog list, knock menu, guarded reset).
 - LT1 was never on this branch, so nothing to remove here.
+
+## 2026-11-10 - Levin board: drive files and digital baro panel (port)
+
+- Ported release-branch commit 511e0fa6: gen_image_board.sh uses <board>/mass_storage/ files without the generated README when present; Levin drive = rusefi.ini.7z, rusEFI Wiki.url, Levin Tuning.url. New ts_show_digital_baro flag (default true), false for Levin.
+- Note: master's create_ini_image scripts skip image creation on MSYS/MINGW/CYGWIN, so on this branch the drive image is only produced by Linux builds (CI).

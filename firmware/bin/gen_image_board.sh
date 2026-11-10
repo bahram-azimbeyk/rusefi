@@ -24,6 +24,14 @@ if [ "" = "$BOARD_SPECIFIC_URL" ]; then
 fi
 echo "BOARD_SPECIFIC_URL=[$BOARD_SPECIFIC_URL]"
 
+# A board may supply the complete set of extra drive files in <board>/mass_storage/.
+# Then only those files and the INI archive are placed on the drive (no generated README).
+if [ -z "${EXTRA_FILES_TO_COPY_ON_IMAGE_FOLDER}" ] && [ -d "${BOARD_DIR}/mass_storage" ]; then
+  export EXTRA_FILES_TO_COPY_ON_IMAGE_FOLDER="${BOARD_DIR}/mass_storage"
+  export MSD_IMAGE_SKIP_README=true
+  echo "Using board drive files from ${EXTRA_FILES_TO_COPY_ON_IMAGE_FOLDER}, without README"
+fi
+
 INI_IMAGE_SIZE=${INI_IMAGE_SIZE:-136}
 INI_IMAGE_COMPRESSED_SIZE=${INI_IMAGE_COMPRESSED_SIZE:-1088}
 

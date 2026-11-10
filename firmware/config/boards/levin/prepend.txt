@@ -29,6 +29,7 @@
 #define MAP_EST_RPM_COUNT 6
 #define MAP_EST_LOAD_COUNT 6
 #define ts_show_vbatt_pin false
+#define ts_show_digital_baro false
 ! Only the guarded reset in Controller -> Base Tunes (board_popular_vehicles.ini).
 #define ts_show_reset_calibrations false
 

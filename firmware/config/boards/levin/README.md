@@ -60,6 +60,9 @@ before assigning it to another. Connector YAMLs list the MCU connections.
   time in knock_config.h. On F4, ADC1/ADC2 are the slow and fast ADCs, so knock inputs
   must be ADC3-capable (PA0-3/PC0-3). Knock sensing ships disabled; calibrate per engine.
 - Tachometer output (TACHO, PE8) defaults to inverted output mode.
+- Baro sensor dialog shows only the analog panel; the LPS2x digital baro panel is hidden.
+- USB drive holds exactly three files: rusefi.ini.7z (matching INI), "rusEFI Wiki.url" and
+  "Levin Tuning.url", taken from mass_storage/ in this board folder.
 - CAN is on its own connector CN13 (ATX 4P): 1 CANH, 2 CANL, 3 +12V via 0.5 A fuse, 4 GND.
 - Controller -> Base Tunes resets the whole ECU to this board default base tune; the
   button is enabled only after ticking the "I understand" confirmation.

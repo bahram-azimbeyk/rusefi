@@ -61,6 +61,7 @@ def check(path):
     assert re.search(r'commandButton = "Reset ECU to Levin default base tune", '
                      r'cmd_set_engine_type_default, \{ levinResetConfirm == 1 \}', text)
     assert 'levinResetConfirm = bits' in text
+    assert 'panel = digitalBaroSettings' not in text and 'panel = analogBaroSettings' in text
     assert 'Reset firmware settings' not in text and 'Reset to factory tune' not in text
 
     fields = set(re.findall(r'^\s*field\s*=\s*"[^"]*",\s*(\w+)', text, re.MULTILINE))

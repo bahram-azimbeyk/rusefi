@@ -2778,6 +2778,7 @@ end_struct
 #define ts_show_ign_key_switch false
 #define ts_show_baroSettings true
 #define ts_show_baro_pin true
+#define ts_show_digital_baro true
 #define ts_show_ford_toyota_tps_pps true
 #define ts_show_primary_trigger true
 #define ts_show_ign_key_analog_input false
