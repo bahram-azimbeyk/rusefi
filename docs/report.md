@@ -761,3 +761,22 @@ Remaining:
   No macOS hardware run or thread dump was available, so these reproduced leaks
   do not establish that every possible source of thread exhaustion is fixed.
 - No commit, push, or GitHub comment was made.
+
+## 2026-10-09 - Upstream Levin board support (PR #10360)
+
+- Prepared feature/levin-board in D:/project/codes/rusefi-levin-upstream from master 5a5aac87. Preserved the independent tested release_20260812 checkout and artifacts.
+- Added Pro 2.3 board wiring with Pro 2.4 labels, UART/CH340/Bluetooth and native USB profiles. Named the native metadata file meta-info-levin_native.env so automatic BUNDLE_NAME discovery produces levin_native rather than the generic native name.
+- The existing matrix discovers both profiles for PR and scheduled builds; its normal publishing jobs upload bundles and signature-specific INIs after acceptance. Added a generated-INI check to those jobs.
+- Added default-on visibility flags for fixed stepper, barometer and battery pins. Generic F407 retains its selectors. External Levin pins remain configurable; PCB-internal wiring is restored by the board hook.
+- Reproduced custom barometer calibration incorrectly using manifold MAP endpoints in a separate passing-test commit, then fixed it and updated the expectations. Added production-board-hook tests against the real configuration structure, without the private release checkout's HAL stubs.
+- Validation: all 1452 host tests in 274 suites pass. Both official Linux Levin firmware/bundle jobs and their INI checks pass. Native USB firmware/OpenBLT also compile locally with ARM GCC 14.2.1; binary transport strings confirm no primary UART thread in that variant.
+- Owner reports the release_20260812 native build works on the ECU. This does not establish current-master or full peripheral hardware validation. CH340/BT, SD/CAN, stepper, output polarity, ADC scaling, persistence and actual engine timing still need bench coverage. Automatic TunerStudio download can only be checked after official INI publication.
+- Published https://github.com/rusefi/rusefi/pull/10360 as a normal PR, with separate commits for reproduction, calibration fix, visibility flags, board support and CI integration. No upstream merge, official publication or ECU flashing was performed. Session report and generated artifacts remain local, outside the PR diff.
+- Final local validation: both native and UART firmware/OpenBLT compile, and both pass check_illegal_conversion.sh. Binary strings confirm USB in both profiles and the primary UART thread only in levin. Current master writes SREC under firmware/build/rusefi.srec, unlike the older release helper's assumed deliver path; local artifact collection was corrected without a firmware source change.
+
+## 2026-11-10 - Levin board: port of release-branch board updates
+
+- PR #10360 is closed (not merged); feature/levin-board is now the fork's master-based Levin branch.
+- Ported from feature/levin-release-20260812 (identical board sources before the change): inputs renamed (PULSE IN n, GROUND SWITCH n); ANALOG IN 2 PC0 -> PC4; ANALOG IN 4 PC5 (CN11_7); software knock on ADC3 with KNOCK1 PC3 (CN11_11) and KNOCK2 PC0 (CN11_10) via knock_config.h; tach output default inverted; guarded "Reset ECU to Levin default base tune" in Controller -> Base Tunes (PC variable gate, bench-test reset hidden); on-board PA5 barometer is a default, user-assignable INTERNAL BARO input instead of a forced pin.
+- Updated LevinBoard host tests (tach mode, baro default and kept reassignment) and check_ini.py (new labels, knock pins absent from analog list, knock menu, guarded reset).
+- LT1 was never on this branch, so nothing to remove here.
