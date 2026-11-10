@@ -51,6 +51,9 @@ The target name is intentionally `levin` for a future Lite revision with matchin
   verification on the physical board. Battery scaling remains adjustable.
 - On-board SMD284 barometer on PA5 is the default baro input, shown as `INTERNAL BARO`;
   it is user assignable (Baro sensor -> Baro input) like any other analog input.
+- Baro sensor dialog shows only the analog panel; the LPS2x digital baro panel is hidden.
+- USB drive (native USB MSD) holds exactly three files: `rusefi.ini.7z` (matching INI),
+  `rusEFI Wiki.url` and `Levin Tuning.url`, taken from `mass_storage/` in this board folder.
 - CAN is on its own connector CN13 (ATX 4P): 1 CANH, 2 CANL, 3 +12V via 0.5 A fuse, 4 GND.
 - SMD284: `Vout / Vdd = 0.007895 * pressure_kPa`, using the SMD084/SMD284 column
   of the supplied Bosch datasheet. Custom calibration endpoints: 0 kPa at 0 V and

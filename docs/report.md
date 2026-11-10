@@ -481,3 +481,11 @@ Open follow-ups:
 - baroSensor.hwChannel = EFI_ADC_5 moved from levinConfigOverrides (forced on every load) to levinDefaultConfiguration (default only). PA5 is listed in inputs.yaml as int_baro / "INTERNAL BARO" so it is selectable in every analog dropdown; ts_show_baro_pin override removed from prepend.txt, so Baro input (and the LPS2x digital baro pins, active only when no analog baro is set) are visible again.
 - CAN left untouched: it is on separate connector CN13 (ATX 4P: 1 CANH, 2 CANL, 3 +12V via 0.5 A fuse, 4 GND); documented in the board README. Older Levin hardware will not be produced, so no compatibility handling for the former PC0 ANALOG IN 2.
 - Tests: board host test updated (default PA5, foreign reassignment kept) and passes; check_ini.py now expects INTERNAL BARO at ADC5, 10 analog entries and a visible baroSensor_hwChannel field. Firmware not built.
+
+## 2026-11-10 - Levin: hardware feedback, drive contents, digital baro panel
+
+- User flashed the UART build (ba1dde46). Tach output mode still showed "default": board defaults (levinDefaultConfiguration, incl. OM_INVERTED tach) apply only on a configuration reset; flashing keeps the stored tune. MINIMAL_PINS preset sets nothing after the board hook, so Controller -> Base Tunes reset (or editing the field) is required on an already-configured ECU.
+- Added ts_show_digital_baro (default true) gating the digitalBaroSettings panel in the Baro sensor dialog; levin sets it false. check_ini.py asserts only the analog panel remains.
+- Drive contents: new board hook in bin/gen_image_board.sh - if <board>/mass_storage/ exists (and EXTRA_FILES_TO_COPY_ON_IMAGE_FOLDER is unset) its files are used and MSD_IMAGE_SKIP_README=true drops the generated README in both create_ini_image scripts. Levin ships "rusEFI Wiki.url" (https://wiki.rusefi.com/) and "Levin Tuning.url" (https://levintuning.ir/). F407 uses the uncompressed 136 KB image, where the INI must stay a .7z (zip is ~166 KB and does not fit).
+- Validation: standalone image generation through the Windows wrappers; decoded FAT image contains exactly rusefi.ini.7z, Levin Tuning.url, rusEFI Wiki.url. Firmware not rebuilt yet.
+- levin-board: earlier batch validated (18 LevinBoard/SensorInit tests, levin INI generated, check_ini PASS), committed (12565126, f978b9a6) and pushed; both checkouts cleaned of generated files.

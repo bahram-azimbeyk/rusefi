@@ -51,8 +51,12 @@ WIKI_FILE_PATH=hw_layer/mass_storage/rusEFI\ ${SHORT_BOARD_NAME}\ Wiki.url
 
 cp hw_layer/mass_storage/filesystem_contents/rusEFI_Wiki_template.url "${WIKI_FILE_PATH}"
 echo "URL=${BOARD_SPECIFIC_URL}" >> "${WIKI_FILE_PATH}"
-cp hw_layer/mass_storage/filesystem_contents/README.template.txt "${README_FILE_PATH}"
-echo ${BOARD_SPECIFIC_URL}       >> "${README_FILE_PATH}"
+README_ON_IMAGE=()
+if [[ "${MSD_IMAGE_SKIP_README}" != "true" ]]; then
+  cp hw_layer/mass_storage/filesystem_contents/README.template.txt "${README_FILE_PATH}"
+  echo ${BOARD_SPECIFIC_URL}       >> "${README_FILE_PATH}"
+  README_ON_IMAGE=("${README_FILE_PATH}")
+fi
 
 
 
@@ -67,7 +71,7 @@ else
   exit 1
 fi
 
-hw_layer/mass_storage/create_image.sh $H_OUTPUT $FS_SIZE false $ZIP7 "${README_FILE_PATH}" "${EXTRA_FILES_TO_COPY_ON_IMAGE[@]}"
+hw_layer/mass_storage/create_image.sh $H_OUTPUT $FS_SIZE false $ZIP7 "${README_ON_IMAGE[@]}" "${EXTRA_FILES_TO_COPY_ON_IMAGE[@]}"
 
-rm $ZIP "${README_FILE_PATH}" "${WIKI_FILE_PATH}"
+rm -f $ZIP "${README_FILE_PATH}" "${WIKI_FILE_PATH}"
 exit 0

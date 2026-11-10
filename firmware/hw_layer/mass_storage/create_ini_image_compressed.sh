@@ -40,8 +40,12 @@ WIKI_FILE_PATH=hw_layer/mass_storage/rusEFI\ ${SHORT_BOARD_NAME}\ Wiki.url
 
 cp hw_layer/mass_storage/filesystem_contents/rusEFI_Wiki_template.url "${WIKI_FILE_PATH}"
 echo "URL=${BOARD_SPECIFIC_URL}" >> "${WIKI_FILE_PATH}"
-cp hw_layer/mass_storage/filesystem_contents/README.nozip.template.txt "${README_FILE_PATH}"
-echo ${BOARD_SPECIFIC_URL}       >> "${README_FILE_PATH}"
+README_ON_IMAGE=()
+if [[ "${MSD_IMAGE_SKIP_README}" != "true" ]]; then
+  cp hw_layer/mass_storage/filesystem_contents/README.nozip.template.txt "${README_FILE_PATH}"
+  echo ${BOARD_SPECIFIC_URL}       >> "${README_FILE_PATH}"
+  README_ON_IMAGE=("${README_FILE_PATH}")
+fi
 
 if [[ -z "${EXTRA_FILES_TO_COPY_ON_IMAGE_FOLDER}" ]]; then
   EXTRA_FILES_TO_COPY_ON_IMAGE=("hw_layer/mass_storage/filesystem_contents/rusEFI Forum.url" "hw_layer/mass_storage/filesystem_contents/rusEFI Quick Start.url" "${WIKI_FILE_PATH}")
@@ -54,7 +58,7 @@ else
   exit 1
 fi
 
-hw_layer/mass_storage/create_image.sh $H_OUTPUT $FS_SIZE true $FULL_INI "${README_FILE_PATH}" "${EXTRA_FILES_TO_COPY_ON_IMAGE[@]}"
+hw_layer/mass_storage/create_image.sh $H_OUTPUT $FS_SIZE true $FULL_INI "${README_ON_IMAGE[@]}" "${EXTRA_FILES_TO_COPY_ON_IMAGE[@]}"
 
-rm "${README_FILE_PATH}" "${WIKI_FILE_PATH}"
+rm -f "${README_FILE_PATH}" "${WIKI_FILE_PATH}"
 exit 0

@@ -26,5 +26,6 @@ for name in ["vbattAdcChannel","canRxPin","canTxPin","sdCardCsPin","spi3sckPin",
 for name in ["baroSensor_hwChannel","clt_bias_resistor","iat_bias_resistor","vbattDividerCoeff"]: assert name in fields,name
 assert "@@if_" not in s
 assert re.search(r'commandButton = "Reset ECU to Levin default base tune", cmd_set_engine_type_default, \{ levinResetConfirm == 1 \}',s)
+assert "panel = digitalBaroSettings" not in s and "panel = analogBaroSettings" in s
 assert "levinResetConfirm = bits" in s and "Reset firmware settings" not in s and "Reset to factory tune" not in s
 print("PASS: 26 outputs, 9 digital inputs, 10 analog inputs (incl. INTERNAL BARO), enum IDs, simple labels, hidden internal pins, editable calibration")
